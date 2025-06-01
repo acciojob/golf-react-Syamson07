@@ -1,42 +1,67 @@
-import React, { Component, useState } from "react";
-import '../styles/App.css';
+import React, { Component } from "react";
 
-class App extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            renderBall: false,
-            posi : 0,
-            ballPosition: { left: "0px" }
-        };
-        this.renderChoice = this.renderBallOrButton.bind(this)
-        this.buttonClickHandler = this.buttonClickHandler.bind(this)
+class GolfGame extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      gameStarted: false,
+      ballPosition: 0, // position in pixels from the left
     };
+  }
 
-    buttonClickHandler() {
-   
-   }
-    renderBallOrButton() {
-		if (this.state.renderBall) {
-		    return <div className="ball" style={this.state.ballPosition}></div>
-		} else {
-		    return <button onClick={this.buttonClickHandler} >Start</button>
-		}
-    }
+  componentDidMount() {
+    // Add event listener for keydown to detect Right Arrow key press
+    window.addEventListener("keydown", this.handleKeyDown);
+  }
 
-    // bind ArrowRight keydown event
-    componentDidMount() {
-      
-    }
+  componentWillUnmount() {
+    // Clean up event listener when component unmounts
+    window.removeEventListener("keydown", this.handleKeyDown);
+  }
 
-    render() {
-        return (
-            <div className="playground">
-                {this.renderBallOrButton()}
-            </div>
-        )
+  handleKeyDown = (event) => {
+    // keyCode 39 is Right Arrow key
+    if (event.keyCode === 39 && this.state.gameStarted) {
+      this.setState((prevState) => ({
+        ballPosition: prevState.ballPosition + 5,
+      }));
     }
+  };
+
+  buttonClickHandler = () => {
+    this.setState({ gameStarted: true });
+  };
+
+  renderChoice() {
+    if (!this.state.gameStarted) {
+      // Show Start button initially
+      return (
+        <button className="start" onClick={this.buttonClickHandler}>
+          Start
+        </button>
+      );
+    } else {
+      // Show the golf ball when game started
+      return (
+        <div
+          className="ball"
+          style={{
+            position: "relative",
+            left: `${this.state.ballPosition}px`,
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            backgroundColor: "white",
+            border: "2px solid black",
+          }}
+        ></div>
+      );
+    }
+  }
+
+  render() {
+    return <div>{this.renderChoice()}</div>;
+  }
 }
 
-
-export default App;
+export default GolfGame;
