@@ -3,56 +3,56 @@ import React, { Component } from "react";
 class GolfGame extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      gameStarted: false,
-      ballPosition: 0, // position in pixels from the left
+      ballVisible: false,
+      ballPosition: 0,
     };
+
+    // Bind methods here
+    this.buttonClickHandler = this.buttonClickHandler.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
-  componentDidMount() {
-    // Add event listener for keydown to detect Right Arrow key press
-    window.addEventListener("keydown", this.handleKeyDown);
+  buttonClickHandler() {
+    this.setState({ ballVisible: true });
   }
 
-  componentWillUnmount() {
-    // Clean up event listener when component unmounts
-    window.removeEventListener("keydown", this.handleKeyDown);
-  }
-
-  handleKeyDown = (event) => {
-    // keyCode 39 is Right Arrow key
-    if (event.keyCode === 39 && this.state.gameStarted) {
+  handleKeyDown(event) {
+    if (event.keyCode === 39 && this.state.ballVisible) {
       this.setState((prevState) => ({
         ballPosition: prevState.ballPosition + 5,
       }));
     }
-  };
+  }
 
-  buttonClickHandler = () => {
-    this.setState({ gameStarted: true });
-  };
+  componentDidMount() {
+    window.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.handleKeyDown);
+  }
 
   renderChoice() {
-    if (!this.state.gameStarted) {
-      // Show Start button initially
+    if (!this.state.ballVisible) {
       return (
         <button className="start" onClick={this.buttonClickHandler}>
           Start
         </button>
       );
     } else {
-      // Show the golf ball when game started
       return (
         <div
           className="ball"
           style={{
+            width: "30px",
+            height: "30px",
+            borderRadius: "50%",
+            backgroundColor: "green",
             position: "relative",
             left: `${this.state.ballPosition}px`,
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            backgroundColor: "white",
-            border: "2px solid black",
+            transition: "left 0.1s ease",
           }}
         ></div>
       );
